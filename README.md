@@ -5,20 +5,16 @@
 ![GitHub open issues](https://img.shields.io/github/issues/angeluciel/better-ITSM?style=for-the-badge)
 ![GitHub open PRs](https://img.shields.io/github/issues-pr/angeluciel/better-ITSM?style=for-the-badge)
 
-![hero](//https://blocks.astratic.com/img/general-img-landscape.png)
+<img src="https://blocks.astratic.com/img/general-img-landscape.png" width="60%"/>
 
-<p align="center">
-  <b align="center">
-    If you do it, make it pretty.
-  </b>
-</p>
+**If you do it, make it pretty.**
 
 > Descrição
 
 ### Ajustes e melhorias
 
-- [] Melhorar X
+- [ ] Melhorar X
 
 ### Issues sendo tratados
 
-- [] ISSUE001 - Exemplo
+- [ ] ISSUE001 - Exemplo
