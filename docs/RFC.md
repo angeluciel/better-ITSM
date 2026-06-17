@@ -19,7 +19,7 @@
         </tr>
          <tr>
           <td style="padding-block:8px; border-right:1px solid;""><b>Created At</b></td>
-          <td>2026-16-06</td>
+          <td>2026-06-16</td>
         </tr>
          <tr>
           <td style="padding-block:8px; border-right:1px solid;""><b>Updated At</b></td>
@@ -396,47 +396,160 @@ _Other options and why rejected. Buy vs build, existing tools, etc._
 
 ## 6. Scope / Requirements
 
+_Requirements for **v1 (MVP)** unless flagged otherwise. Later phases (v2/v3) tracked in §2 Phasing._
+
 ### 6.1 Functional
 
-- …
+**Authentication & users (IAM — §4.7.1)**
+
+- Internal users authenticate with email + password; server issues an `HttpOnly`/`Secure`/`SameSite` session cookie backed by a Redis session store.
+- Three coarse roles — `ADMIN`, `ANALYST`, `REQUESTER` — mapped internally to a capability set; other modules authorize via `can(actor, capability, subject?)`, never by inspecting role.
+- Admin can create, disable, and list users; `INVITED` status reserved for the (deferred) invitation flow.
+- Logout destroys the session; mutating cookie-authenticated routes are CSRF-protected.
+
+**Ticketing (hub — §4.7.2)**
+
+- Create Incidents and Requests with subject, description, type, priority, requester, and optional queue/assignee.
+- Each ticket gets a human-friendly monotonic number, displayed `INC-<n>` / `REQ-<n>` by type.
+- Analysts triage from queues, assign/reassign tickets, set priority, and drive the fixed v1 status lifecycle (`NEW → OPEN → PENDING → RESOLVED → CLOSED`, with `CANCELLED` and `RESOLVED → OPEN` reopen).
+- Comments support `PUBLIC` (requester-visible) and `INTERNAL` (analyst-only) visibility.
+- Watchers can be added/removed; attachments link to tickets via the Files module (`fileId`).
+- All ticket mutations emit domain events (`TicketCreated`, `TicketAssigned`, `TicketStatusChanged`, …) on the EventBus.
+
+**Analyst console**
+
+- Fast queue view with filter, sort, and full-text search across tickets (subject/description/number/requester).
+- Ticket detail view: timeline of comments + status changes, assignment, priority, watchers, attachments, SLA state.
+- Bulk-friendly actions (assign, change status/priority) and keyboard-driven navigation.
+
+**Requester portal**
+
+- Open a ticket, track its status, read public comments, and reply — low-friction, scoped to the requester's own tickets (`ticket:read:own`).
+
+**SLA (§4.6)**
+
+- Define basic SLA policies keyed off priority; timers start/pause/stop in response to ticket events.
+- Breach detection and escalation signals surfaced to the console; SLA state read via the SLA contract, not stored on the Ticket.
+
+**Notifications**
+
+- Email + in-app notifications driven by domain events (e.g. `TicketAssigned` → assignee, `TicketCommented` → watchers), delivered via BullMQ jobs.
+
+**Audit**
+
+- Immutable activity log capturing cross-module domain events for each ticket.
+
+**API**
+
+- REST API documented by OpenAPI; Zod-derived contracts shared between frontend and backend.
 
 ### 6.2 Non-Functional
 
-- **Performance**: …
-- **Scale**: …
-- **Security / Auth**: …
-- **Availability**: …
+- **Performance**: p95 < 200 ms for read endpoints (queue list, ticket detail) and < 400 ms for writes under nominal load; console interactions feel instant (< 100 ms perceived) via TanStack Query caching and optimistic updates.
+- **Scale**: a single self-hosted instance handles ~100 concurrent analysts and ≥ 100k tickets without architectural change; modular-monolith boundaries (§4.6) allow extracting hot modules into services later without a rewrite. SaaS multi-tenancy is architected for, not built (§3).
+- **Security / Auth**: passwords hashed with argon2id; tokens (PAT/service) hashed at rest and scoped/revocable; session cookies `HttpOnly`/`Secure`/`SameSite`; CSRF protection on cookie flows; capability-based authorization with ownership checks owned by IAM; least-privilege module boundaries (no shared mutable tables, cross-module reference by id only); dependencies pinned and scanned.
+- **Availability**: stateless API replicas behind a load balancer; session/job state externalized to Redis so instances are disposable; Postgres is the single stateful tier (operator-managed backups/replication). Target ≥ 99.5% for a single-instance self-host; graceful degradation if Redis/queues are briefly unavailable (events retried, not lost).
+- **Maintainability**: clean modular architecture, ports for all infra (broker, cache, storage, auth), documented contracts, Vitest unit/integration + Playwright E2E coverage on critical paths, and a clear contribution path (open-source).
+- **Portability / Self-host**: full stack runs via Docker Compose from day one; no managed-cloud dependency required to operate.
+- **Accessibility / i18n**: responsive web (no native apps in v1); Radix UI primitives for a11y baseline; copy externalized to leave room for localization later.
+- **Observability**: structured logs, health/readiness endpoints, and basic metrics (queue depth, job failures, SLA breaches) exposed for operators.
 
 ## 7. Risks / Open Questions
 
 | Risk / Question | Impact | Mitigation / Owner |
 |-----------------|--------|--------------------|
-| … | … | … |
+| **Gap may not be real** — Zammad/iTop could already cover the niche (§5). | High — invalidates build. | Time-boxed evaluation of Zammad + iTop before locking the build decision. Owner: author. |
+| **Scope creep** — full-ITIL ambition leaks into v1. | High — v1 never ships. | Hard phase gates (§2); v1 = ticketing core only; defer list in §4.7 enforced in review. |
+| **Provisional module boundaries wrong** — a boundary needs merge/split after domain modeling. | Medium — rework. | Boundaries explicitly provisional (§4.6); revisit per-module before locking; id-only references keep refactors local. |
+| **Fixed-in-code state machine** vs eventual Workflow module (v2). | Medium — migration cost. | Centralized state-machine module (§4.7.2) isolates transition logic for later externalization. |
+| **EventBus reliability** — BullMQ/Redis delivery semantics for domain events. | Medium — lost side effects (notifications, audit). | EventBus behind a port; at-least-once + idempotent consumers; RabbitMQ adapter path reserved (§4.4). |
+| **SLA pause/breach correctness** — timer accuracy across PENDING transitions. | Medium — wrong metrics/escalations. | Drive timers off events; detailed pause rules deferred but seam defined (§4.7.2). |
+| **Solo/small contributor bandwidth** — broad roadmap, limited hands. | Medium — slow runway. | Strict phasing; open-source contribution path; prioritize MVP parity. |
+| **Custom fields deferred** — `jsonb` validation design unproven. | Low (v1) | Seam noted in Ticketing; design alongside Admin/Config in v2. |
+| **Open**: PAT/OIDC needed for any v1 integration? | Low | Stubbed at the seam (§4.7.1); revisit if a v1 integration appears. |
 
 ## 8. Success Metrics
 
 _How we know it worked. Measurable._
 
-- …
-- …
+- **Triage speed**: median time-to-find a ticket and time-to-first-assignment lower than the GLPI baseline (target ≥ 30% faster).
+- **Analyst efficiency**: average ticket-handling time and clicks-per-resolution trend down release over release.
+- **SLA adherence**: ≥ 90% of in-scope tickets resolved within SLA; breaches visible and trending down.
+- **Adoption**: weekly active analysts and self-service tickets opened via the requester portal (vs. analyst-created) growing.
+- **Reliability**: API availability ≥ 99.5%; event-delivery success ≥ 99.9%; zero lost audit events.
+- **Performance**: p95 latencies meet §6.2 targets in production-like load tests.
+- **Open-source health**: time-to-first-successful-`docker compose up`, external contributors, and resolved issues over time.
+- **Qualitative**: analyst satisfaction (survey/SUS) materially above the GLPI baseline.
 
 ## 9. Stakeholders
 
 | Role | Name | Responsibility |
 |------|------|----------------|
-| Owner | … | … |
-| Approver | … | … |
+| Owner / Author | angeluciel | Drives the RFC, architecture, and v1 delivery. |
+| Approver | _TBD_ | Signs off on the design before build starts. |
+| Reviewers | _TBD (eng)_ | Review architecture, boundaries, and tech choices. |
+| Contributors | _Open-source community_ | Implement modules per the phased roadmap and contribution path. |
+| Users — Analysts | _Pilot team_ | Primary users of the analyst console; supply triage/UX feedback. |
+| Users — Requesters | _Pilot org_ | Use the self-service portal; supply friction feedback. |
 
 ## 10. Timeline / Milestones
 
+_Indicative; sequenced by dependency, not committed dates. Phases map to §2._
+
 | Milestone | Target | Notes |
 |-----------|--------|-------|
-| M1 - … | … | … |
+| **M0 — Competitor eval** | Pre-build | Evaluate Zammad/iTop (§5); confirm the gap is real before committing to build. |
+| **M1 — Foundations** | v1 | Monorepo, Docker Compose, CI, shared Zod contracts, NestJS + React skeletons, Postgres/MikroORM + Redis/BullMQ wired. |
+| **M2 — IAM (thin)** | v1 | Email/password auth, Redis sessions, capability `can()` surface, Access/Directory ports (§4.7.1). |
+| **M3 — Ticketing core** | v1 | Incidents + Requests, fixed lifecycle, comments/visibility, watchers, queues, attachments, domain events (§4.7.2). |
+| **M4 — Console + portal** | v1 | Analyst console (search/queue/detail) and requester self-service portal. |
+| **M5 — SLA + Notifications + Audit** | v1 | Basic SLA policies/timers/breach, event-driven notifications, audit log. |
+| **M6 — Harden + ship v1** | v1 | E2E coverage, perf pass, docs, self-host release. |
+| **M7+ — v2/v3** | Later | Problems, Changes, Workflow, custom fields (v2); Assets/CMDB, KB, reporting (v3); SaaS mode (later). |
 
 ## 11. Dependencies
 
-- …
+**Runtime / infrastructure**
+
+- **PostgreSQL** — primary datastore (per-module schema namespaces).
+- **Redis** — session store, BullMQ backing, and v1 EventBus transport.
+- **Docker / Docker Compose** — self-host packaging from day one.
+- **SMTP / email provider** — notification delivery (pluggable).
+- **Object storage (S3-compatible)** — optional Files backend behind a storage port; local FS default.
+
+**Core libraries / frameworks** (see §4.3 for the full stack)
+
+- Backend: NestJS (Fastify), MikroORM, BullMQ, argon2.
+- Frontend: React + Vite, TanStack (Router/Query/Table), Zustand, React Hook Form + Zod, Tailwind v4, Radix UI.
+- Tooling: pnpm, Turborepo, TypeScript, Vitest, Playwright, Storybook.
+
+**External / future**
+
+- **OIDC provider** — deferred SSO seam (§4.5).
+- **RabbitMQ** — deferred EventBus adapter for advanced installs (§4.4).
+
+**Decision dependency**
+
+- Build-vs-adopt verdict (§5) gates M1; M0 evaluation must complete first.
 
 ## 12. Appendix / References
 
-- …
+- **Internal**
+  - §4.4 Event Bus — port/adapter swap strategy.
+  - §4.5 Authentication & Authorization.
+  - §4.6 Module Boundaries (provisional).
+  - §4.7 Domain Models (IAM, Ticketing).
+- **Benchmarks / competitors**
+  - GLPI — incumbent baseline (pain we're escaping).
+  - Tiflux — UX/workflow benchmark (paid/closed).
+  - Zammad, iTop, Znuny (OTRS), osTicket, UVdesk/FreeScout — OSS landscape to evaluate (§5).
+- **Standards / concepts**
+  - ITIL — incident/request/problem/change/CMDB/KB vocabulary informing the domain roadmap.
+  - OpenAPI — API contract documentation.
+  - OIDC (authorization code + PKCE) — deferred SSO.
+  - argon2id — password hashing.
+- **Glossary**
+  - **Actor / Principal** — the thing acting (user now, service token later); referenced by id across modules.
+  - **Capability** — namespaced permission string (e.g. `ticket:assign`) checked via `can()`; replaces role branching.
+  - **Port / Adapter** — interface boundary (`EventBus`, storage, auth) with swappable concrete implementations.
+  - **Modular monolith** — single deployable app split into bounded-context modules, extractable into services later.
