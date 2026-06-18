@@ -35,15 +35,15 @@
 
 ## 1. Problem / Motivation
 
-**Incumbent pain - GLPI.** GLPI is the open-source ITSM tool many teams default to, but it falls short for daily operators:
+**Incumbent pain: GLPI.** GLPI is the open-source ITSM tool many teams default to, but it falls short for daily operators:
 
-- **Hard to find data / track tickets.** Analysts struggle to locate information and follow ticket state across the queue. Slow triage, lost context.
-- **Poor UI/UX.** Interface is dated and unfriendly. High friction for the people living in it all day.
+- **Hard to find data and track tickets.** Analysts struggle to locate information and follow ticket state across the queue. Triage is slow and context gets lost.
+- **Poor UI/UX.** The interface is dated and unfriendly, which is high friction for the people living in it all day.
 - **Old tech stack.** Aging architecture makes it hard to customize, extend, and maintain.
 
-**Benchmark - Tiflux.** Tiflux delivers the UX and workflow quality we want, but it is **paid / closed-source**. No open-source tool currently combines Tiflux-grade UX with GLPI-grade openness.
+**Benchmark: Tiflux.** Tiflux delivers the UX and workflow quality we want, but it is paid and closed-source. No open-source tool currently combines Tiflux-grade UX with GLPI-grade openness.
 
-**Why now.** Gap in the market: teams that need a self-hostable, open-source ITSM tool are stuck choosing between bad UX (GLPI) and vendor lock-in / cost (Tiflux). `better-ITSM` aims to be the open-source tool with strong UX, easy customization, clean architecture, and long-term maintainability.
+**Why now.** There is a gap in the market: teams that need a self-hostable, open-source ITSM tool are stuck choosing between bad UX (GLPI) and vendor lock-in or cost (Tiflux). `better-ITSM` aims to be the open-source tool with strong UX, easy customization, clean architecture, and long-term maintainability.
 
 **Cost of doing nothing.** Analysts stay slow and frustrated on GLPI, or orgs pay for closed tools they can't customize or self-host.
 
@@ -53,29 +53,29 @@ _Driving principles: **good UX**, **easy customization**, **clean architecture**
 
 **Product**
 
-- [ ] Fast, modern analyst console - find any ticket/data in seconds, clear queue + ticket-state tracking.
-- [ ] Self-service requester portal - open and track own tickets with low friction.
-- [ ] Full ITIL surface as a phased roadmap: Incidents → Requests → Problems → Changes → Assets/CMDB → Knowledge Base → SLA management.
-- [ ] First-class customization - fields, workflows, statuses, SLAs configurable without forking code.
+- [ ] Fast, modern analyst console that finds any ticket or data in seconds, with clear queue and ticket-state tracking.
+- [ ] Self-service requester portal to open and track your own tickets with low friction.
+- [ ] Full ITIL surface as a phased roadmap: Incidents, then Requests, Problems, Changes, Assets/CMDB, Knowledge Base, and SLA management.
+- [ ] First-class customization, so fields, workflows, statuses, and SLAs are configurable without forking code.
 
 **Technical**
 
-- [ ] Clean, documented architecture; modular so ITIL domains ship incrementally.
-- [ ] Deployable self-hosted (Docker) from day one; architected so multi-tenant SaaS is possible later without a rewrite.
-- [ ] Maintainable, modern stack with tests and clear contribution path (open-source).
+- [ ] Clean, documented architecture, modular so ITIL domains ship incrementally.
+- [ ] Deployable self-hosted (Docker) from day one, architected so multi-tenant SaaS is possible later without a rewrite.
+- [ ] Maintainable, modern stack with tests and a clear contribution path (open-source).
 
 **Phasing (so v1 stays shippable despite full-ITIL ambition)**
 
-- **v1 (MVP):** Ticketing core (Incidents + Requests), analyst console + requester portal, auth/roles, basic SLA, self-host Docker.
-- **v2:** Problems, Changes, customizable workflows/fields.
-- **v3:** Assets/CMDB, Knowledge Base, reporting/dashboards.
+- **v1 (MVP):** Ticketing core (Incidents and Requests), analyst console and requester portal, auth/roles, basic SLA, self-host Docker.
+- **v2:** Problems, Changes, customizable workflows and fields.
+- **v3:** Assets/CMDB, Knowledge Base, reporting and dashboards.
 - **Later:** Multi-tenant SaaS mode.
 
 ## 3. Non-Goals
 
-- **Not** a 1:1 feature-clone of GLPI - drop legacy cruft, keep what matters.
+- **Not** a 1:1 feature-clone of GLPI. Drop the legacy cruft, keep what matters.
 - **Not** building multi-tenant SaaS in v1 (architect for it, don't build it yet).
-- **Not** full ITIL on first release - phased; v1 is ticketing core only.
+- **Not** full ITIL on the first release. It's phased, and v1 is the ticketing core only.
 - **Not** a GLPI migration/import tool in v1 (revisit later).
 - **Not** mobile native apps in v1 (responsive web only).
 
@@ -85,7 +85,7 @@ _High-level approach. Architecture sketch. How it works end to end._
 
 ### 4.1 Overview
 
-TypeScript end to end. Monorepo (pnpm workspace + Turborepo) holds a React SPA and a NestJS API, sharing types/contracts. API exposes REST documented by OpenAPI. PostgreSQL via MikroORM for persistence; Redis + BullMQ for background jobs (SLA timers, notifications) **and** domain events between modules. Everything runs under Docker Compose for self-host.
+TypeScript end to end. A monorepo (pnpm workspace plus Turborepo) holds a React SPA and a NestJS API, sharing types and contracts. The API exposes REST documented by OpenAPI. PostgreSQL via MikroORM for persistence; Redis plus BullMQ for background jobs (SLA timers, notifications) and for domain events between modules. Everything runs under Docker Compose for self-host.
 
 ### 4.2 Architecture
 
@@ -98,7 +98,7 @@ TypeScript end to end. Monorepo (pnpm workspace + Turborepo) holds a React SPA a
           (MikroORM)                                (jobs + domain events)
 ```
 
-_Detailed architecture (module boundaries, event flows, tenancy) — see §4.6 / TBD._
+_Detailed architecture (module boundaries, event flows, tenancy): see §4.6 / TBD._
 
 ### 4.3 Tech Stack
 
@@ -137,7 +137,7 @@ _Detailed architecture (module boundaries, event flows, tenancy) — see §4.6 /
 | ORM | MikroORM |
 | Database | PostgreSQL |
 | Cache / jobs / events | Redis + BullMQ |
-| Message broker | _None in v1 — RabbitMQ deferred (see Event Bus note)_ |
+| Message broker | _None in v1; RabbitMQ deferred (see Event Bus note)_ |
 
 **Testing**
 
@@ -146,45 +146,54 @@ _Detailed architecture (module boundaries, event flows, tenancy) — see §4.6 /
 | Unit / integration | Vitest |
 | E2E | Playwright |
 
-**Shared validation note:** Zod schemas defined in a shared workspace package, reused for frontend forms and backend DTO validation — single source of truth for contracts.
+**Shared validation note:** Zod schemas defined in a shared workspace package, reused for frontend forms and backend DTO validation. This gives a single source of truth for contracts.
 
 ### 4.4 Event Bus (decoupling)
 
-Domain events flow through an **`EventBus` port** (interface) — modules publish/subscribe against the abstraction, never a concrete broker. v1 ships a **BullMQ-backed adapter** (Redis). The transport is swappable:
+Domain events flow through an `EventBus` port (interface). Modules publish and subscribe against the abstraction, never a concrete broker. v1 ships a BullMQ-backed adapter (Redis). The transport is swappable:
 
 ```
 Module ──> EventBus (port) ──> [ BullMQ adapter ]   ← v1
                             └─> [ RabbitMQ adapter ] ← advanced install, later
 ```
 
-- No module imports BullMQ/Redis directly — only the adapter does.
-- Adding RabbitMQ later = new adapter + config flag, zero changes in domain modules.
-- Same rule applies broadly: infra (broker, cache, storage) sits behind ports so swaps stay local.
+- No module imports BullMQ or Redis directly. Only the adapter does.
+- Adding RabbitMQ later means a new adapter plus a config flag, with zero changes in domain modules.
+- The same rule applies broadly: infra (broker, cache, storage) sits behind ports so swaps stay local.
+
+**Event payload convention**
+
+> Events should be self-contained for their intended consumers, without becoming full entity dumps.
+
+- Carry the fields consumers actually need to act, so they don't synchronously call back into the producer (which avoids coupling and chatty reads).
+- Do **not** serialize the whole aggregate "just in case." That bloats payloads, leaks internal shape, and couples consumers to fields they don't use.
+- Identify the known consumers when defining an event; include their required fields, plus stable ids for anything they may hydrate on demand via a read contract.
+- When a new consumer needs a field the event lacks, extend the event deliberately (additive) rather than defaulting to fat payloads.
 
 ### 4.5 Authentication & Authorization
 
-Two distinct auth surfaces — keep separate:
+There are two distinct auth surfaces, kept separate:
 
 **Interactive users (web app)**
 
-- **Internal:** email + password → server-issued **session cookie** (`HttpOnly`, `Secure`, `SameSite`). Server-side session store (Redis). Passwords hashed with argon2id (or bcrypt).
-- **External / SSO:** **OIDC** (authorization code + PKCE). Maps OIDC identity → local user. Pluggable provider config.
+- **Internal:** email and password yield a server-issued **session cookie** (`HttpOnly`, `Secure`, `SameSite`). Server-side session store (Redis). Passwords hashed with argon2id (or bcrypt).
+- **External / SSO:** **OIDC** (authorization code plus PKCE). Maps an OIDC identity to a local user. Pluggable provider config.
 
 **Programmatic API access**
 
-- **PAT** (personal access tokens) — scoped, user-owned, revocable.
-- **Service tokens** — for machine-to-machine / integrations, scoped + revocable.
-- Tokens hashed at rest; carry scopes for authorization.
+- **PAT** (personal access tokens): scoped, user-owned, revocable.
+- **Service tokens:** for machine-to-machine integrations, scoped and revocable.
+- Tokens hashed at rest; they carry scopes for authorization.
 
 **Design notes**
 
-- Auth providers behind an abstraction (same port pattern) so internal / OIDC / token strategies compose cleanly.
-- Authorization: role-based (analyst / requester / admin) now; design leaves room for finer-grained permissions later.
-- CSRF protection required for cookie-based session flows; tokens (PAT/service) exempt (no ambient credentials).
+- Auth providers sit behind an abstraction (the same port pattern) so internal, OIDC, and token strategies compose cleanly.
+- Authorization is role-based (analyst / requester / admin) now; the design leaves room for finer-grained permissions later.
+- CSRF protection is required for cookie-based session flows; tokens (PAT and service) are exempt because they carry no ambient credentials.
 
 ### 4.6 Module Boundaries (provisional)
 
-Modular monolith: one NestJS app, internally split into **bounded-context modules**. Each module owns its data (its own tables/schema namespace), exposes a narrow public API, and talks to other modules only via (a) published **domain events** (EventBus) or (b) explicit **public service contracts** — never by reaching into another module's entities or tables. This keeps modules extractable into services later if needed.
+A modular monolith: one NestJS app, internally split into **bounded-context modules**. Each module owns its data (its own tables/schema namespace), exposes a narrow public API, and talks to other modules only via (a) published **domain events** (EventBus) or (b) explicit **public service contracts**. It never reaches into another module's entities or tables. This keeps modules extractable into services later if needed.
 
 **Platform modules (cross-cutting, phase v1)**
 
@@ -212,43 +221,43 @@ Modular monolith: one NestJS app, internally split into **bounded-context module
 
 **Boundary rules**
 
-- **No shared mutable tables.** Each module = own schema namespace. Cross-module reference by **id only**.
+- **No shared mutable tables.** Each module owns its schema namespace. Cross-module references are by **id only**.
 - **Communication:** async via EventBus (preferred for side effects), or sync via a module's exported service contract (for queries that must be consistent now).
-- **Dependency direction:** domain modules depend on platform modules, not vice versa. Platform modules never import domain modules.
-- **Ticketing is the hub** — Problems/Changes/Assets/KB attach to it. Keep its public contract small and stable.
-- These are **provisional** — domain modeling inside each boundary (next step) may merge/split a boundary. Revisit before locking.
+- **Dependency direction:** domain modules depend on platform modules, not the other way around. Platform modules never import domain modules.
+- **Ticketing is the hub.** Problems, Changes, Assets, and KB attach to it. Keep its public contract small and stable.
+- These are **provisional**. Domain modeling inside each boundary (the next step) may merge or split a boundary. Revisit before locking.
 
 ### 4.7 Domain Models
 
 Per-module domain modeling. Built incrementally as boundaries are designed.
 
-#### 4.7.1 IAM (thin — v1)
+#### 4.7.1 IAM (thin, v1)
 
-Scope: **just enough to support Ticketing.** Authenticate an interactive user, know their role, and let other modules reference users as actors (requester / assignee / watcher). OIDC and API tokens are stubbed at the seam, not built yet.
+Scope: **just enough to support Ticketing.** Authenticate an interactive user, know their role, and let other modules reference users as actors (requester, assignee, watcher). OIDC and API tokens are stubbed at the seam, not built yet.
 
 **Entities**
 
 | Entity | Fields (core) | Notes |
 |--------|---------------|-------|
 | **User** | `id` (uuid), `email` (unique, citext), `displayName`, `status`, `role`, `createdAt`, `updatedAt` | The actor every other module references by `id` |
-| **PasswordCredential** | `userId` (1:1 User), `passwordHash` (argon2id), `updatedAt` | Separate from User → external-only users have none. Nullable relation |
+| **PasswordCredential** | `userId` (1:1 User), `passwordHash` (argon2id), `updatedAt` | Separate from User so external-only users have none. Nullable relation |
 
 **Enums**
 
 - `UserStatus`: `ACTIVE` · `DISABLED` · `INVITED`
 - `Role` (v1, coarse): `ADMIN` · `ANALYST` · `REQUESTER`
-  - Start as enum column, not a table. **Role is an IAM-internal detail — it never crosses the boundary.** Promote to a Role/Permission table when fine-grained perms land (v2+).
+  - Starts as an enum column, not a table. **Role is an IAM-internal detail; it never crosses the boundary.** Promote it to a Role/Permission table when fine-grained perms land (v2+).
 
-**Authorization model — capabilities, not roles**
+**Authorization model: capabilities, not roles**
 
-Other modules must **never** branch on `actor.role`. They ask whether the actor holds a **capability** for an action; IAM owns the role→capability mapping internally.
+Other modules must **never** branch on `actor.role`. They ask whether the actor holds a **capability** for an action; IAM owns the role-to-capability mapping internally.
 
 - Capability vocabulary (string, namespaced by domain), v1 coarse set, e.g.:
   - `ticket:read:any` · `ticket:read:own` · `ticket:create` · `ticket:assign` · `ticket:comment` · `ticket:close` · `ticket:admin`
-- Role→capability map lives in IAM (v1: a static table). Ticketing declares the *actions* it needs; IAM decides if the actor may.
+- The role-to-capability map lives in IAM (v1: a static table). Ticketing declares the *actions* it needs; IAM decides if the actor may.
 - Single authorization surface: `can(actor, capability, subject?)`. The optional `subject` lets IAM resolve ownership rules (e.g. `ticket:read:own` checks `subject.requesterId === actor.id`) so that logic never leaks into Ticketing.
 
-**Sessions** — stored in **Redis** (server-side session store), not a domain table. Cookie holds opaque session id only. A lightweight `sessions` listing (for "active devices" UI) is **deferred**.
+**Sessions** are stored in **Redis** (server-side session store), not a domain table. The cookie holds an opaque session id only. A lightweight `sessions` listing (for an "active devices" UI) is **deferred**.
 
 **Public contract (what other modules consume)**
 
@@ -276,25 +285,25 @@ interface DirectoryPort {
 // ActorRef = { id, kind, displayName, email, status } — no role, no credentials
 ```
 
-Ticketing depends on `AccessPort` + `DirectoryPort`, not on a `User` entity. It references actors by `id` and never inspects how authorization is decided.
+Ticketing depends on `AccessPort` and `DirectoryPort`, not on a `User` entity. It references actors by `id` and never inspects how authorization is decided.
 
 **Auth flow (v1)**
 
-1. `POST /auth/login` — email + password → verify argon2id → create Redis session → set `HttpOnly`/`Secure`/`SameSite` cookie.
-2. Session guard resolves cookie → `Actor` on each request; injected into Ticketing handlers.
-3. `POST /auth/logout` — destroy session.
+1. `POST /auth/login` — email and password, verify argon2id, create a Redis session, set the `HttpOnly`/`Secure`/`SameSite` cookie.
+2. Session guard resolves the cookie to an `Actor` on each request; injected into Ticketing handlers.
+3. `POST /auth/logout` — destroy the session.
 4. CSRF protection on cookie-authenticated mutating routes.
 
 **Deferred (seams left, not built)**
 
-- **OIDC** — `OidcIdentity` entity (`userId`, `issuer`, `subject`) + provider config. Auth strategy behind the same guard abstraction.
-- **API tokens** — `ApiToken` (PAT + service tokens: hashed secret, scopes, `revokedAt`). Token guard alongside session guard.
-- **Invitations / password reset** flows — `INVITED` status already reserves room.
-- **Fine-grained permissions** — Role/Permission tables behind `can()`.
+- **OIDC:** `OidcIdentity` entity (`userId`, `issuer`, `subject`) plus provider config. Auth strategy behind the same guard abstraction.
+- **API tokens:** `ApiToken` (PAT and service tokens: hashed secret, scopes, `revokedAt`). Token guard alongside the session guard.
+- **Invitations and password reset** flows: the `INVITED` status already reserves room.
+- **Fine-grained permissions:** Role/Permission tables behind `can()`.
 
-#### 4.7.2 Ticketing (hub — v1)
+#### 4.7.2 Ticketing (hub, v1)
 
-Scope: **Incidents + Requests** with a shared lifecycle, queues, assignment, public/internal comments, watchers, attachments. The state machine is **fixed in code for v1**; the Workflow module (v2) will externalize transitions. Ticketing emits domain events; SLA / Notifications / Audit react.
+Scope: **Incidents + Requests** with a shared lifecycle, queues, assignment, public/internal comments, watchers, attachments. The state machine is **fixed in code for v1**; the Workflow module (v2) will externalize transitions. Ticketing emits domain events; SLA, Notifications, and Audit react.
 
 **Aggregate: `Ticket` (root)**
 
@@ -302,25 +311,25 @@ Scope: **Incidents + Requests** with a shared lifecycle, queues, assignment, pub
 |-------|-------|
 | `id` (uuid) | Internal identity |
 | `number` | Human-friendly monotonic seq; displayed `INC-1042` / `REQ-1042` by `type` |
-| `type` | `INCIDENT` \| `REQUEST` — discriminator, shared shape v1 |
+| `type` | `INCIDENT` \| `REQUEST` discriminator; shared shape in v1 |
 | `subject` | Short title |
 | `description` | Body (initial report) |
 | `status` | See lifecycle |
 | `priority` | `LOW` \| `MEDIUM` \| `HIGH` \| `URGENT` (flat v1; impact×urgency matrix deferred) |
-| `requesterId` | Actor id (IAM Directory) — who it's for |
-| `assigneeId?` | Actor id — current owner, nullable |
+| `requesterId` | Actor id (IAM Directory), i.e. who it's for |
+| `assigneeId?` | Actor id of the current owner, nullable |
 | `queueId?` | Queue the ticket sits in |
 | `createdAt` / `updatedAt` / `resolvedAt?` / `closedAt?` | Timestamps drive SLA + metrics |
 
-Actors referenced **by id only** (no IAM entity import). `requesterId`/`assigneeId` hydrated via `DirectoryPort`.
+Actors are referenced **by id only** (no IAM entity import). `requesterId` and `assigneeId` are hydrated via `DirectoryPort`.
 
 **Entities within the aggregate / module**
 
 | Entity | Fields | Notes |
 |--------|--------|-------|
-| **Comment** | `id`, `ticketId`, `authorId`, `body`, `visibility`, `createdAt` | `visibility`: `PUBLIC` (requester sees) \| `INTERNAL` (analysts only) — core analyst/requester split |
+| **Comment** | `id`, `ticketId`, `authorId`, `body`, `visibility`, `createdAt` | `visibility`: `PUBLIC` (requester sees) \| `INTERNAL` (analysts only); the core analyst/requester split |
 | **Watcher** | `ticketId`, `actorId` | Many-to-many; Notifications targets watchers |
-| **TicketAttachment** | `ticketId`, `fileId`, `commentId?` | Link only — Files module owns the blob |
+| **TicketAttachment** | `ticketId`, `fileId`, `commentId?` | Link only; the Files module owns the blob |
 | **Queue** | `id`, `name`, `description?` | Bucket analysts triage from. Assignment target. (Could grow into Team later) |
 
 **Enums**
@@ -341,14 +350,14 @@ any (pre-RESOLVED) ──> CANCELLED
 ```
 
 - `NEW`: created, untriaged. `OPEN`: being worked. `PENDING`: waiting on requester (often pauses SLA). `RESOLVED`: fix proposed. `CLOSED`: confirmed/terminal. `CANCELLED`: abandoned.
-- Transitions guarded centrally (one state-machine module) — **no scattered status branching**, mirrors the capability rule.
-- `RESOLVED → OPEN` (reopen) allowed; `CLOSED` terminal (reopen-from-closed window deferred).
+- Transitions are guarded centrally (one state-machine module), so there's no scattered status branching. This mirrors the capability rule.
+- `RESOLVED → OPEN` (reopen) is allowed; `CLOSED` is terminal (reopen-from-closed window deferred).
 
 **Domain events (EventBus)**
 
 `TicketCreated` · `TicketAssigned` · `TicketStatusChanged` · `TicketPriorityChanged` · `TicketCommented` · `TicketResolved` · `TicketClosed` · `TicketReopened`
 
-Consumers: **SLA** (timers/escalation), **Notifications** (requester/assignee/watchers), **Audit** (history). Ticketing knows none of them — fire and forget.
+Consumers: **SLA** (timers/escalation), **Notifications** (requester/assignee/watchers), **Audit** (history). Ticketing knows none of them; fire and forget.
 
 **Capabilities consumed (from IAM)**
 
@@ -358,10 +367,10 @@ Every handler calls `can(actor, capability, ticket?)`. `read:own` passes the tic
 
 **Cross-module seams**
 
-- **SLA** — owns timers/policies. Ticketing emits events + exposes `priority`/timestamps; SLA computes due/breach. UI reads SLA state via SLA contract, **not** stored on Ticket.
-- **Files** — attachments by `fileId`.
-- **Admin/Config** — **custom fields** deferred. When added, definitions live in Admin/Config; Ticket stores values (likely `jsonb` column) validated against definitions. Seam noted, not built v1.
-- **Service Catalog** — Requests may later originate from a catalog item (`catalogItemId?`). Nullable seam.
+- **SLA** owns timers and policies. Ticketing emits events and exposes `priority` plus timestamps; SLA computes due and breach times. The UI reads SLA state via the SLA contract; it isn't stored on the Ticket.
+- **Files:** attachments by `fileId`.
+- **Admin/Config:** **custom fields** are deferred. When added, definitions live in Admin/Config; the Ticket stores values (likely a `jsonb` column) validated against those definitions. Seam noted, not built in v1.
+- **Service Catalog:** Requests may later originate from a catalog item (`catalogItemId?`). Nullable seam.
 
 **Deferred (v1 out)**
 
@@ -371,11 +380,73 @@ Every handler calls `can(actor, capability, ticket?)`. `read:own` passes the tic
 - Problem/Change linkage (→ v2 modules attach to Ticket)
 - Custom fields, SLA pause rules detail, time tracking, reopen-from-closed
 
+#### 4.7.3 SLA (v1)
+
+Scope: attach **time targets** (first-response, resolution) to tickets, track them as live clocks, pause when waiting on the requester, and fire breach/warning events. Fully **event-driven**: it reacts to Ticketing events and is never called synchronously by Ticketing. Timers are **BullMQ delayed jobs**. SLA state is **not** stored on the Ticket; the UI reads it through the SLA contract.
+
+**Entities**
+
+| Entity | Fields (core) | Notes |
+|--------|---------------|-------|
+| **SlaPolicy** | `id`, `name`, `enabled`, `match`, `calendarId?`, `isDefault` | `match` = conditions `{ ticketType?, priority?, queueId? }`. First enabled policy that matches wins; `isDefault` is fallback |
+| **SlaTarget** | `id`, `policyId`, `metric`, `durationMinutes` | A policy has 1+ targets (e.g. first-response 30m, resolution 8h) |
+| **BusinessCalendar** | `id`, `name`, `timezone`, `weeklyHours`, `holidays[]` | Optional. No calendar ⇒ **24/7**. Drives how elapsed time is counted |
+| **SlaClock** | `id`, `ticketId`, `policyId`, `metric`, `startedAt`, `dueAt`, `pausedAt?`, `accumulatedPauseMs`, `stoppedAt?`, `status`, `jobId?` | The live instance. `jobId` = BullMQ breach job ref |
+
+**Enums**
+
+- `SlaMetric`: `FIRST_RESPONSE` · `RESOLUTION`
+- `SlaClockStatus`: `RUNNING` · `PAUSED` · `MET` · `BREACHED`
+
+**How it works (event-driven + BullMQ)**
+
+| Trigger (Ticketing event) | SLA action |
+|---------------------------|------------|
+| `TicketCreated` | Match policy → create clocks per target → compute `dueAt` (via calendar) → schedule delayed **breach job** + optional **warning job** (e.g. 80%) |
+| `TicketCommented` (PUBLIC, `authorId !== requesterId`) | First agent reply → stop `FIRST_RESPONSE` clock → `MET` or `BREACHED`; cancel its job |
+| `TicketStatusChanged → PENDING` | **Pause** running clocks (waiting on requester) → cancel/hold jobs, accrue pause time |
+| `TicketStatusChanged → OPEN` (from PENDING) | **Resume** → recompute `dueAt` from accumulated pause → reschedule jobs |
+| `TicketResolved` | Stop `RESOLUTION` clock → `MET`/`BREACHED`; cancel job |
+| Breach job fires | Mark clock `BREACHED` → emit `SlaBreached` |
+| Warning job fires | emit `SlaBreachWarning` |
+
+- **First response** is detected without roles: the first `PUBLIC` comment whose `authorId !== ticket.requesterId`. (The event payload must carry `visibility` and `authorId`.)
+- **Recompute on resume** keeps business-hours math correct; the delayed job is the single source of breach timing (rescheduled, not polled).
+
+**Events emitted (EventBus)**
+
+`SlaClockStarted` · `SlaClockPaused` · `SlaClockResumed` · `SlaTargetMet` · `SlaBreachWarning` · `SlaBreached`
+
+Consumers: **Notifications** (warn assignee/escalate), **Audit**. (Escalation routing itself is Workflow/v2; v1 just notifies.)
+
+**Public contract (read side)**
+
+```ts
+interface SlaPort {
+  getTicketSla(ticketId): SlaClockView[];   // { metric, status, dueAt, remainingMs, paused }
+}
+// Ticket list/detail UI calls this to render "due in 2h" / breached badges
+```
+
+**Cross-module seams**
+
+- **Ticketing** is the source of truth for ticket state; SLA consumes its events only. Per the [event payload convention](#44-event-bus-decoupling), ticket events carry what SLA needs to act: `type`, `priority`, `queueId`, `status`, `requesterId`, and for comments `visibility` plus `authorId`, not the whole ticket. Anything SLA needs only rarely, it hydrates by id via a small Ticketing read contract.
+- **BullMQ:** delayed jobs for breach and warning; cancel or reschedule on pause and resume. SLA owns its queue.
+- **Admin/Config:** the policy and calendar management UI lives there or in SLA admin; definitions are owned by SLA.
+
+**Deferred (v1 out)**
+
+- Per-priority target overrides within one policy (v1: separate policies match by priority)
+- Escalation chains / auto-reassign (→ Workflow v2)
+- Multiple pause reasons, manual pause, SLA "clock corrections"
+- Operational-level agreements (OLA) / vendor (UC) timers
+- Reporting on SLA attainment (→ Reporting v3, off the emitted events)
+
 ## 5. Alternatives Considered
 
 _Other options and why rejected. Buy vs build, existing tools, etc._
 
-**Open-source competitors to evaluate** (research before committing to build - confirm gap is real):
+**Open-source competitors to evaluate** (research before committing to build, to confirm the gap is real):
 
 | Tool | Notes | Worth a look? |
 |------|-------|---------------|
