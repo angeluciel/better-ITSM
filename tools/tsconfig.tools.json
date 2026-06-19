@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc/tools",
+    "rootDir": ".",
+    "target": "es2025",
+    "module": "esnext",
+    "types": ["node"],
+    "importHelpers": false,
+  },
+  "include": ["**/*.ts"]
+}
