@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: deps
+    command: pnpm --filter @better-itsm/api dev
+    volumes:
+      - ./apps/api/src:/app/apps/api/src
+      - ./packages/contracts/src:/app/packages/contracts/src
+    environment:
+      NODE_ENV: development
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      target: deps
+    command: pnpm --filter @better-itsm/web dev
+    volumes:
+      - ./apps/web/src:/app/apps/web/src
+      - ./packages/contracts/src:/app/packages/contracts/src
+    environment:
+      NODE_ENV: development

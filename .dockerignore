@@ -1,0 +1,16 @@
+node_modules
+dist
+.git
+.turbo
+.env
+.env.local
+.env.*.local
+coverage
+*.log
+.DS_Store
+Thumbs.db
+.specify
+specs
+docs
+.claude
+.husky
