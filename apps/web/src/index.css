@@ -2,16 +2,16 @@
 
 :root {
   /* #region Light Neutral */
-  --color-neutral-0: oklch(100% 0 281);
-  --color-neutral-50: oklch(89.03% 0.0067 281);
-  --color-neutral-100: oklch(78.81% 0.013 281);
-  --color-neutral-200: oklch(69.97% 0.0187 281);
-  --color-neutral-300: oklch(62.82% 0.0235 281);
-  --color-neutral-400: oklch(57.38% 0.027 281);
-  --color-neutral-500: oklch(53.31% 0.0292 281);
-  --color-neutral-600: oklch(50% 0.03 281);
-  --color-neutral-700: oklch(46.69% 0.0292 281);
-  --color-neutral-800: oklch(42.62% 0.027 281);
+  --color-neutral-0: oklch(100% 0.00011 281);
+  --color-neutral-50: oklch(97.913% 0.00011 281);
+  --color-neutral-100: oklch(95.767% 0.00182 281);
+  --color-neutral-200: oklch(93.567% 0.00182 2281);
+  --color-neutral-300: oklch(90.069% 0.00431 281);
+  --color-neutral-400: oklch(78.567% 0.00747 281);
+  --color-neutral-500: oklch(65.011% 0.01242 281);
+  --color-neutral-600: oklch(60.284% 0.01449 281);
+  --color-neutral-700: oklch(53.834% 0.01302 281);
+  --color-neutral-800: oklch(43.891% 0.01019 281);
   --color-neutral-900: oklch(37.18% 0.0235 281);
   --color-neutral-950: oklch(30.03% 0.0187 281);
   --color-neutral-1000: oklch(21.19% 0.013 281);
