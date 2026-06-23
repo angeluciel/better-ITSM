@@ -16,7 +16,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-w-screen h-dvh flex flex-col bg-neutral-100 dark:bg-darkNeutral-100">
+    <div className="min-w-screen flex flex-col bg-neutral-100 dark:bg-darkNeutral-100">
       <div className="flex max-w-full h-fit overflow-x-hidden">
         <div className="red flex flex-col w-full">
           <div className="bg-red-50 py-4 flex justify-center items-center">
@@ -366,14 +366,76 @@ function LoginPage() {
           <h1 className="text-lg font-semibold text-neutral-1200 dark:text-darkNeutral-1200">
             Light mode neutrals
           </h1>
-          <div className="bg-neutral-0 w-full rounded-lg p-4">
+          <div className="flex gap-20 bg-neutral-0 w-full rounded-lg p-4">
             <div className="flex flex-col gap-2">
-              <h2>Solid</h2>
-              <div className="flex flex-col">Lightmode solid here</div>
+              <h2 className="font-medium">Solid</h2>
+              <div className="flex flex-col h-fit rounded-sm overflow-hidden">
+                <div className="w-40 py-1 px-2 bg-neutral-0 text-neutral-1200">
+                  neutral-0
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-50 text-neutral-1200">
+                  neutral-50
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-100 text-neutral-1200">
+                  neutral-100
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-200 text-neutral-1200">
+                  neutral-200
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-300 text-neutral-1200">
+                  neutral-300
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-400 text-neutral-1200">
+                  neutral-400
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-500 text-neutral-1200">
+                  neutral-500
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-600 text-neutral-1200">
+                  neutral-600
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-700 text-neutral-0">
+                  neutral-700
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-800 text-neutral-0">
+                  neutral-800
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-900 text-neutral-0">
+                  neutral-900
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-950 text-neutral-0">
+                  neutral-950
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-1000 text-neutral-0">
+                  neutral-1000
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-1100 text-neutral-0">
+                  neutral-1100
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-1200 text-neutral-0">
+                  neutral-1200
+                </div>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
-              <h2>Alpha</h2>
-              <div className="flex flex-col">lightmode alpha here</div>
+              <h2 className="font-medium">Alpha</h2>
+              <div className="flex flex-col h-fit rounded-sm overflow-hidden">
+                <div className="w-40 py-1 px-2 bg-neutral-100A">
+                  neutral-100A
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-200A">
+                  neutral-200A
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-300A">
+                  neutral-300A
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-400A">
+                  neutral-400A
+                </div>
+                <div className="w-40 py-1 px-2 bg-neutral-500A">
+                  neutral-500A
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -381,16 +443,88 @@ function LoginPage() {
           <h1 className="text-lg font-semibold text-neutral-1200 dark:text-darkNeutral-1200">
             Dark mode neutrals
           </h1>
-          <div className="bg-darkNeutral-0 w-full rounded-lg p-4 text-darkNeutral-1200">
+          <div className="bg-darkNeutral-0 flex gap-20 w-full rounded-lg p-4 text-darkNeutral-1200">
             <div className="flex flex-col gap-2">
-              <h2>Solid</h2>
-              <div className="flex flex-col">
-                <div className="bg-darkNeutral--100">darkneutral--100</div>
+              <h2 className="font-medium">Solid</h2>
+              <div className="flex flex-col h-fit rounded-sm overflow-hidden">
+                <div className="w-40 py-1 px-2 bg-darkNeutral--100 text-darkNeutral-1200">
+                  darkNeutral--100
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-0 text-darkNeutral-1200">
+                  darkNeutral-0
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-50 text-darkNeutral-1200">
+                  darkNeutral-50
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-100 text-darkNeutral-1200">
+                  darkNeutral-100
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-150 text-darkNeutral-1200">
+                  darkNeutral-150
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-200 text-darkNeutral-1200">
+                  darkNeutral-200
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-300 text-darkNeutral-1200">
+                  darkNeutral-300
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-400 text-darkNeutral-1200">
+                  darkNeutral-400
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-500 text-darkNeutral-1200">
+                  darkNeutral-500
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-600 text-darkNeutral-1200">
+                  darkNeutral-600
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-700 text-darkNeutral-1200">
+                  darkNeutral-700
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-800 text-darkNeutral--100">
+                  darkNeutral-800
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-900 text-darkNeutral--100">
+                  darkNeutral-900
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-1000 text-darkNeutral--100">
+                  darkNeutral-1000
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-1100 text-darkNeutral--100">
+                  darkNeutral-1100
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-1200 text-darkNeutral--100">
+                  darkNeutral-1200
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <h2>Alpha</h2>
-              <div className="flex flex-col">Darkmode alpha here</div>
+              <h2 className="font-medium">Alpha</h2>
+              <div className="flex flex-col h-fit rounded-sm overflow-hidden">
+                <div className="w-40 py-1 px-2 bg-darkNeutral--100A">
+                  darkNeutral--100A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-0A">
+                  darkNeutral-0A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-50A">
+                  darkNeutral-50A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-100A">
+                  darkNeutral-100A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-150A">
+                  darkNeutral-150A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-200A">
+                  darkNeutral-200A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-300A">
+                  darkNeutral-300A
+                </div>
+                <div className="w-40 py-1 px-2 bg-darkNeutral-400A">
+                  darkNeutral-400A
+                </div>
+              </div>
             </div>
           </div>
         </div>
